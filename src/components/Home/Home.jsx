@@ -1,7 +1,9 @@
 import './Home.css'
-import backgroundLandingPage from '../../assets/background-homesr.png';
+import backgroundLandingPage from '../../assets/background.png';
+import Main from '../Main/Main';
 export default function Home({
-
+    items,
+    onCardClick 
 }) {
     const backgroundUrl = {
         backgroundImage: `url(${backgroundLandingPage})`,
@@ -18,6 +20,10 @@ export default function Home({
                 <div className="home__column right">
                 </div>
             </section>
+            <Main 
+                items={items}
+                onCardClick={onCardClick}
+            />
             
         </>
     )

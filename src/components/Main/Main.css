@@ -1,3 +1,42 @@
 .main__page {
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// '[]'  
+    padding: 2rem;
+    background-color: #121212;
+    min-height: 100vh;
+    color: #fff;
+}
+
+.main__page h1 {
+    font-size: 80px;
+    text-align: center;
+    margin:50px 0px;
+}
+
+.main__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background-color: #181818;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: #282828;
+    transform: scale(1.03);
+}
+
+.card h3 {
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: #b3b3b3;
 }
