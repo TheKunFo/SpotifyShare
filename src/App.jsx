@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react"
-import { 
+import {
   authenticationSpotify,
-  getAlbum, 
+  getAlbum,
 } from "./utils/spotify";
 import CurrencyAuthSpotify from "./contexts/CurrencyAuthSpotify";
 import Home from "./components/Home/Home";
+import Header from "./components/Header/Header";
+import ItemModal from "./components/ItemModal/ItemModal";
 import './App.css';
 
 
 function App() {
+  const [activeItem, setActiveItem] = useState(null);
   const [authSpotify, setAuthSpotify] = useState({})
-  const [album, setAlbum] = useState({})
+  
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     authenticationSpotify()
@@ -28,23 +32,31 @@ function App() {
   useEffect(() => {
     getAlbum()
       .then((data) => {
-        console.log(data);
-        setAlbum(data);
+        setItems(data.tracks.items);
       }).catch((err) => {
         console.log(err);
       })
-  },[]);
-
+  }, []);
 
   return (
-        <CurrencyAuthSpotify.Provider value={authSpotify} >
-            <div className="app">
-              <Home 
-              />
-            </div>
-        </CurrencyAuthSpotify.Provider>
-    )
-  
+    <CurrencyAuthSpotify.Provider value={authSpotify} >
+      <div className="app">
+        <Header
+        />
+        <Home
+          items={items}
+          onCardClick={setActiveItem} 
+        />
+        {activeItem && (
+          <ItemModal
+            item={activeItem}
+            onClose={() => setActiveItem(null)}
+          />
+        )}
+      </div>
+    </CurrencyAuthSpotify.Provider>
+  )
+
 }
 
 export default App
