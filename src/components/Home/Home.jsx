@@ -3,7 +3,7 @@ import backgroundLandingPage from '../../assets/background.png';
 import Main from '../Main/Main';
 export default function Home({
     items,
-    onCardClick 
+    onCardClick, 
 }) {
     const backgroundUrl = {
         backgroundImage: `url(${backgroundLandingPage})`,
