@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import ModalFormInput from '../ModalFormInput/ModalFormInput';
 import './SignIn.css';
+import { currencyUser, loginUser } from '../../utils/user';
 
 export default function SignIn({
     isOpen,
     onClose,
     errors,
     setErrors,
-    handleSubmit,
+    saving,
+    setSaving,
+    setUser,
+    setIsLogging,
 }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,6 +37,30 @@ export default function SignIn({
         }
 
         setErrors(prev => ({ ...prev, [fieldName]: error }));
+    };
+
+    const handleSubmitSignIn = (e) => {
+        e.preventDefault();
+        if (validateAll()) {
+            setSaving('Saving ...')
+            loginUser(
+                { email, password }
+            ).then((res) => {
+                localStorage.setItem('app', res.token);
+                currencyUser().then((response) => {
+                    setUser(response.data)
+                    console.log('Succeffully Login : ', response.data);
+                    setIsLogging(true);
+                })
+
+            }).catch((err) => {
+                console.log('Response Error : ' + err);
+                setSaving('Fail');
+            }).finally(() => {
+                setSaving(null);
+                onClose();
+            })
+        }
     };
 
     const validateAll = () => {
@@ -64,9 +92,9 @@ export default function SignIn({
             onClose={onClose}
             title="Login"
             classForm="login__form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitSignIn}
             classButton="login__button"
-            titleButton="Login"
+            titleButton={ saving ?? 'Login'}
         >
             <div className="form__group">
                 <label>Email</label>

@@ -10,15 +10,20 @@ import ItemModal from "./components/ItemModal/ItemModal";
 import './App.css';
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
+import CurrencyAuthUser from "./contexts/CurrencyAuthUser";
+import { currencyUser } from "./utils/user";
 
 
 function App() {
   const [activeItem, setActiveItem] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
+  const [user, setUser] = useState({})
   const [authSpotify, setAuthSpotify] = useState({})
   const [errors, setErrors] = useState({});
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
+  const [saving, setSaving] = useState(null);
 
   useEffect(() => {
     authenticationSpotify()
@@ -30,67 +35,61 @@ function App() {
       .catch((error) => {
         console.error("Error in useEffect:", error);
       });
-  }, [])
 
-
-  useEffect(() => {
     getAlbum()
       .then((data) => {
         setItems(data.tracks.items);
       }).catch((err) => {
         console.log(err);
       })
-  }, []);
 
-  const handleSubmitSignIn = (e) => {
-    e.preventDefault();
-    if (validateAll()) {
-      console.log('Login Success:', { email, password });
-      onClose();
-    }
-  };
+    currencyUser()
+      .then((response) => {
+        setUser(response.data)
+      })
+  }, [])
 
-  const handleSubmitSignUp = (e) => {
-    e.preventDefault();
-    if (validateAll()) {
-      console.log('Sign Up Success:', form);
-      onClose();
-    }
-  };
 
   return (
-    <CurrencyAuthSpotify.Provider value={authSpotify} >
-      <div className="app">
-        <Header
-          setShowLogin={setShowLogin}
-          setShowSignUp={setShowSignUp}
-        />
-        <Home
-          items={items}
-          onCardClick={setActiveItem}
-        />
-        {activeItem && (
-          <ItemModal
-            item={activeItem}
-            onClose={() => setActiveItem(null)}
+    <CurrencyAuthUser.Provider value={user} >
+      <CurrencyAuthSpotify.Provider value={authSpotify} >
+        <div className="app">
+          <Header
+            setShowLogin={setShowLogin}
+            setShowSignUp={setShowSignUp}
+            isLogging={isLogging}
           />
-        )}
-        <SignIn
-          isOpen={showLogin}
-          onClose={() => setShowLogin(false)}
-          errors={errors}
-          setErrors={setErrors}
-          handleSubmit={handleSubmitSignIn}
-        />
-        <SignUp 
-          isOpen={showSignUp}
-          onClose={() => setShowSignUp(false)}
-          errors={errors}
-          setErrors={setErrors}
-          handleSubmit={handleSubmitSignIn}
-        />
-      </div>
-    </CurrencyAuthSpotify.Provider>
+          <Home
+            items={items}
+            onCardClick={setActiveItem}
+          />
+          {activeItem && (
+            <ItemModal
+              item={activeItem}
+              onClose={() => setActiveItem(null)}
+            />
+          )}
+          <SignIn
+            isOpen={showLogin}
+            onClose={() => setShowLogin(false)}
+            errors={errors}
+            setErrors={setErrors}
+            saving={saving}
+            setSaving={setSaving}
+            setUser={setUser}
+            setIsLogging={setIsLogging}
+          />
+          <SignUp
+            isOpen={showSignUp}
+            onClose={() => setShowSignUp(false)}
+            errors={errors}
+            setErrors={setErrors}
+            saving={saving}
+            setSaving={setSaving}
+          />
+        </div>
+      </CurrencyAuthSpotify.Provider>
+    </CurrencyAuthUser.Provider>
   )
 
 }

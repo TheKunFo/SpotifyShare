@@ -39,6 +39,22 @@
     color: #1ED760;
 }
 
+.header__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 10px;
+    cursor: pointer;
+    border: 2px solid #1db954;
+    transition: transform 0.2s ease;
+}
+
+.header__avatar:hover {
+    transform: scale(1.1);
+}
+
+
 @media (max-width: 600px) {
     .header__container {
         flex-direction: column;
