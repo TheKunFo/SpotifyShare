@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import ModalFormInput from '../ModalFormInput/ModalFormInput';
 import './SignUp.css';
+import { createUser } from '../../utils/user';
 
 export default function SignUp({
     isOpen,
     onClose,
     errors,
     setErrors,
-    handleSubmit,
+    saving,
+    setSaving,
 }) {
     const [form, setForm] = useState({
         email: '',
@@ -15,6 +17,29 @@ export default function SignUp({
         name: '',
         avatar: ''
     });
+    
+
+    const handleSubmitSignUp = (e) => {
+        e.preventDefault();
+        if (validateAll()) {
+            setSaving('Saving ...')
+            createUser({
+                email: form.email,
+                password: form.password,
+                name: form.name,
+                avatar: form.avatar,
+            }).then((response) => {
+                console.log('Successfully create account',response.data)
+                setSaving('Save');
+            }).catch((err) => {
+                console.log('Response Error : '+ err);
+                setSaving('Fail');
+            }).finally(() => {
+                setSaving(null);
+                onClose();
+            })
+        }
+    };
 
     const validateField = (fieldName, value) => {
         let error = '';
@@ -30,8 +55,8 @@ export default function SignUp({
         if (fieldName === 'password') {
             if (!value) {
                 error = 'Password is required';
-            } else if (value.length < 6) {
-                error = 'Password must be at least 6 characters';
+            } else if (value.length < 8) {
+                error = 'Password must be at least 8 characters';
             }
         }
 
@@ -64,7 +89,7 @@ export default function SignUp({
         validateField(name, value);
     };
 
-    
+
 
     return (
         <ModalFormInput
@@ -73,8 +98,8 @@ export default function SignUp({
             title="Sign Up"
             classForm="signup__form"
             classButton="signup__button"
-            titleButton="Sign Up"
-            onSubmit={handleSubmit}
+            titleButton={ saving  ?? 'Sign Up'}
+            onSubmit={handleSubmitSignUp}
         >
             <div className="form__group">
                 <label>Name</label>
