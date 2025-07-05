@@ -1,0 +1,44 @@
+.item__card-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.item__card-container:hover {
+    transform: scale(1.03);
+}
+
+.item__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: #fff;
+}
+
+.item__title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.item__icon {
+    color: #1DB954;
+    /* Spotify green */
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.item__icon:hover {
+    color: #1ed760;
+}
