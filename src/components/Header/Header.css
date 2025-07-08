@@ -39,6 +39,22 @@
     color: #1ED760;
 }
 
+.header__link {
+    background: none;
+    text-decoration: none;
+    border: none;
+    color: #b3b3b3;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 0;
+    font-family: inherit;
+}
+
+.header__link:hover {
+    color: #1ED760;
+}
+
 .header__avatar {
     width: 32px;
     height: 32px;

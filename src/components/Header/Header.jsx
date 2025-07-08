@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import './Header.css';
 import CurrencyAuthUser from '../../contexts/CurrencyAuthUser';
+import { Link } from 'react-router-dom';
 
 export default function Header({
     setShowLogin,
@@ -14,12 +15,12 @@ export default function Header({
                 <h1>Spotify <span>Playlist Share</span></h1>
             </div>
             <nav className="header__nav">
-                <button href="/">Home</button>
+                <Link className='header__link' to="/">Home</Link>
                 {currencyUser && isLogging
                     ?
                     <>
-                        <button onClick={() => setShowLogin(true)} >Playlist</button>
-                        <button onClick={() => setShowLogin(true)} >Profile</button>
+                        <Link className='header__link' to="/playlist">Playlist</Link>
+                        <Link className='header__link' to="/profile">Profile</Link>
                         <img 
                             className="header__avatar" 
                             src={currencyUser.avatar}

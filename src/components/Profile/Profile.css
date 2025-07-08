@@ -1,0 +1,23 @@
+.profile__container {
+    display: flex;
+    height: 100vh;
+    background-color: #121212;
+    overflow: hidden;
+}
+
+.profile__sidebar {
+    flex: 0 0 250px;
+    background-color: #121212;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.profile__main {
+    flex: 1;
+    background-color: #121212;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
