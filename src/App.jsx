@@ -8,6 +8,7 @@ import CurrencyAuthSpotify from "./contexts/CurrencyAuthSpotify";
 import Home from "./components/Home/Home";
 import Header from "./components/Header/Header";
 import ItemModal from "./components/ItemModal/ItemModal";
+import ResponsiveContainer from "./components/ResponsiveContainer";
 import './App.css';
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
@@ -56,51 +57,53 @@ function App() {
     <BrowserRouter>
       <CurrencyAuthUser.Provider value={user} >
         <CurrencyAuthSpotify.Provider value={authSpotify} >
-          <div className="app">
-            <Header
-              setShowLogin={setShowLogin}
-              setShowSignUp={setShowSignUp}
-              isLogging={isLogging}
-            />
-            <Routes>
-              <Route path="/" element={
-                <Home
-                  items={items}
-                  onCardClick={setActiveItem}
-                />
-              }/>
-              <Route path="/profile" element={
-                <Profile
-                
-                />
-              }/>
-            </Routes>
-
-            {activeItem && (
-              <ItemModal
-                item={activeItem}
-                onClose={() => setActiveItem(null)}
+          <ResponsiveContainer>
+            <div className="app">
+              <Header
+                setShowLogin={setShowLogin}
+                setShowSignUp={setShowSignUp}
+                isLogging={isLogging}
               />
-            )}
-            <SignIn
-              isOpen={showLogin}
-              onClose={() => setShowLogin(false)}
-              errors={errors}
-              setErrors={setErrors}
-              saving={saving}
-              setSaving={setSaving}
-              setUser={setUser}
-              setIsLogging={setIsLogging}
-            />
-            <SignUp
-              isOpen={showSignUp}
-              onClose={() => setShowSignUp(false)}
-              errors={errors}
-              setErrors={setErrors}
-              saving={saving}
-              setSaving={setSaving}
-            />
-          </div>
+              <Routes>
+                <Route path="/" element={
+                  <Home
+                    items={items}
+                    onCardClick={setActiveItem}
+                  />
+                }/>
+                <Route path="/profile" element={
+                  <Profile
+                  
+                  />
+                }/>
+              </Routes>
+
+              {activeItem && (
+                <ItemModal
+                  item={activeItem}
+                  onClose={() => setActiveItem(null)}
+                />
+              )}
+              <SignIn
+                isOpen={showLogin}
+                onClose={() => setShowLogin(false)}
+                errors={errors}
+                setErrors={setErrors}
+                saving={saving}
+                setSaving={setSaving}
+                setUser={setUser}
+                setIsLogging={setIsLogging}
+              />
+              <SignUp
+                isOpen={showSignUp}
+                onClose={() => setShowSignUp(false)}
+                errors={errors}
+                setErrors={setErrors}
+                saving={saving}
+                setSaving={setSaving}
+              />
+            </div>
+          </ResponsiveContainer>
         </CurrencyAuthSpotify.Provider>
       </CurrencyAuthUser.Provider>
     </BrowserRouter>

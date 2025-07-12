@@ -2,5 +2,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  outline: 1px solid red;
+}
+
+.app {
+  width: 100%;
+  min-width: 320px;
+  max-width: 100vw;
+  overflow-x: clip;
+  box-sizing: border-box;
 }
