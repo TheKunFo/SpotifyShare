@@ -19,3 +19,11 @@ export const accessApplication = () => {
   }
   return token;
 };
+
+export const getBaseUrl = () => {
+  return BASE_URL_BACKEND;
+};
+
+export const getAuthToken = () => {
+  return accessToken();
+};

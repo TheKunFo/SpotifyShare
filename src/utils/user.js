@@ -45,3 +45,12 @@ export const currencyUser = () => {
       throw error;
     });
 };
+
+export const logoutUser = () => {
+  // Clear tokens from localStorage
+  localStorage.removeItem("token");
+  localStorage.removeItem("app");
+
+  // Return a resolved promise for consistency with other user functions
+  return Promise.resolve({ message: "Logged out successfully" });
+};

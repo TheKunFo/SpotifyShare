@@ -3,21 +3,24 @@ import "./Header.css";
 import CurrencyAuthUser from "../../contexts/CurrencyAuthUser";
 import { Link } from "react-router-dom";
 
-export default function Header({ setShowLogin, setShowSignUp, isLogging }) {
-  const currencyUser = useContext(CurrencyAuthUser);
+export default function Header({
+  setShowLogin,
+  setShowSignUp,
+  isLogging,
+  onLogout,
+}) {
+  const { currentUser } = useContext(CurrencyAuthUser);
   return (
     <header>
       <div className="header__container">
         <div className="header__logo">
-          <h2>
-            Spotify <span>Playlist Share</span>
-          </h2>
+          <h2 className="header__title">Spotify Playlist Share</h2>
         </div>
         <nav className="header__nav">
           <Link className="header__link" to="/">
             Home
           </Link>
-          {currencyUser && isLogging ? (
+          {currentUser && isLogging ? (
             <>
               <Link className="header__link" to="/playlist">
                 Playlist
@@ -25,11 +28,20 @@ export default function Header({ setShowLogin, setShowSignUp, isLogging }) {
               <Link className="header__link" to="/profile">
                 Profile
               </Link>
-              <img
-                className="header__avatar"
-                src={currencyUser.avatar}
-                alt={currencyUser.name}
-              />
+              <div className="header__user">
+                <img
+                  className="header__avatar"
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                />
+                <button
+                  className="header__logout-btn"
+                  onClick={onLogout}
+                  title="Logout"
+                >
+                  Logout
+                </button>
+              </div>
             </>
           ) : (
             <>

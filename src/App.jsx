@@ -10,9 +10,10 @@ import "./App.css";
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
 import CurrencyAuthUser from "./contexts/CurrencyAuthUser";
-import { currencyUser } from "./utils/user";
+import { currencyUser, logoutUser } from "./utils/user";
 import Profile from "./components/Profile/Profile";
 import Playlist from "./components/Playlist/Playlist";
+import SpotifyCallback from "./components/SpotifyCallback/SpotifyCallback";
 
 function App() {
   const [activeItem, setActiveItem] = useState(null);
@@ -24,6 +25,22 @@ function App() {
   const [errors, setErrors] = useState({});
   const [items, setItems] = useState([]);
   const [saving, setSaving] = useState(null);
+
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      logoutUser()
+        .then(() => {
+          setUser({});
+          setIsLogging(false);
+          setAuthSpotify({});
+          // Optionally redirect to home page
+          window.location.href = "/";
+        })
+        .catch((error) => {
+          console.error("Logout error:", error);
+        });
+    }
+  };
 
   useEffect(() => {
     authenticationSpotify()
@@ -44,14 +61,22 @@ function App() {
         console.log(err);
       });
 
-    currencyUser().then((response) => {
-      setUser(response.data);
-    });
+    currencyUser()
+      .then((response) => {
+        if (response && response.data) {
+          setUser(response.data);
+          setIsLogging(true);
+        }
+      })
+      .catch((error) => {
+        console.log("User not authenticated:", error);
+        setIsLogging(false);
+      });
   }, []);
 
   return (
     <BrowserRouter>
-      <CurrencyAuthUser.Provider value={user}>
+      <CurrencyAuthUser.Provider value={{ currentUser: user, isLogging }}>
         <CurrencyAuthSpotify.Provider value={authSpotify}>
           <ResponsiveContainer>
             <div className="app">
@@ -59,6 +84,7 @@ function App() {
                 setShowLogin={setShowLogin}
                 setShowSignUp={setShowSignUp}
                 isLogging={isLogging}
+                onLogout={handleLogout}
               />
               <Routes>
                 <Route
@@ -67,6 +93,7 @@ function App() {
                 />
                 <Route path="/playlist" element={<Playlist />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/callback" element={<SpotifyCallback />} />
               </Routes>
 
               {activeItem && (
