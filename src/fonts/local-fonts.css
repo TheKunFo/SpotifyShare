@@ -1,0 +1,96 @@
+/* 
+ * Local Font Declarations
+ * 
+ * Use this file to declare @font-face rules for locally hosted fonts.
+ * Place your font files in the ./files/ directory and reference them here.
+ * 
+ * Example structure:
+ * src/fonts/files/
+ *   ├── inter/
+ *   │   ├── Inter-Regular.woff2
+ *   │   ├── Inter-Medium.woff2
+ *   │   └── Inter-Bold.woff2
+ *   ├── poppins/
+ *   │   ├── Poppins-Regular.woff2
+ *   │   ├── Poppins-Medium.woff2
+ *   │   └── Poppins-Bold.woff2
+ *   └── roboto/
+ *       ├── Roboto-Regular.woff2
+ *       ├── Roboto-Medium.woff2
+ *       └── Roboto-Bold.woff2
+ */
+
+/* 
+ * Example @font-face declarations for local fonts:
+ * 
+ * @font-face {
+ *   font-family: 'Inter';
+ *   src: url('./files/inter/Inter-Regular.woff2') format('woff2'),
+ *        url('./files/inter/Inter-Regular.woff') format('woff');
+ *   font-weight: 400;
+ *   font-style: normal;
+ *   font-display: swap;
+ * }
+ * 
+ * @font-face {
+ *   font-family: 'Inter';
+ *   src: url('./files/inter/Inter-Medium.woff2') format('woff2'),
+ *        url('./files/inter/Inter-Medium.woff') format('woff');
+ *   font-weight: 500;
+ *   font-style: normal;
+ *   font-display: swap;
+ * }
+ * 
+ * @font-face {
+ *   font-family: 'Inter';
+ *   src: url('./files/inter/Inter-Bold.woff2') format('woff2'),
+ *        url('./files/inter/Inter-Bold.woff') format('woff');
+ *   font-weight: 700;
+ *   font-style: normal;
+ *   font-display: swap;
+ * }
+ */
+
+/* Uncomment and modify the declarations below when you add local font files */
+
+/*
+@font-face {
+  font-family: 'Inter';
+  src: url('./files/inter/Inter-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./files/inter/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./files/inter/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./files/inter/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./files/inter/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+*/
