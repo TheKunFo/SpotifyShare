@@ -12,6 +12,7 @@ import SignUp from "./components/Auth/SignUp";
 import CurrencyAuthUser from "./contexts/CurrencyAuthUser";
 import { currencyUser } from "./utils/user";
 import Profile from "./components/Profile/Profile";
+import Playlist from "./components/Playlist/Playlist";
 
 function App() {
   const [activeItem, setActiveItem] = useState(null);
@@ -64,6 +65,7 @@ function App() {
                   path="/"
                   element={<Home items={items} onCardClick={setActiveItem} />}
                 />
+                <Route path="/playlist" element={<Playlist />} />
                 <Route path="/profile" element={<Profile />} />
               </Routes>
 

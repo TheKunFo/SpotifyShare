@@ -1,9 +1,9 @@
 import "./Profile.css";
 export default function Profile() {
   return (
-    <div className="profile__container">
-      <div className="profile__sidebar"></div>
-      <div className="profile__main"></div>
-    </div>
+    <section className="profile__container">
+      <aside className="profile__sidebar"></aside>
+      <main className="profile__main"></main>
+    </section>
   );
 }

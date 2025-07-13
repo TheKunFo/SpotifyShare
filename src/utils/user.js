@@ -9,7 +9,12 @@ export const createUser = ({ name, password, email, avatar }) => {
       "Content-type": "application/json",
     },
     body: JSON.stringify({ name, password, email, avatar }),
-  }).then(checkResponse);
+  })
+    .then(checkResponse)
+    .catch((error) => {
+      console.error("Create user request failed:", error);
+      throw error;
+    });
 };
 
 export const loginUser = ({ email, password }) => {
@@ -19,7 +24,12 @@ export const loginUser = ({ email, password }) => {
       "Content-type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-  }).then(checkResponse);
+  })
+    .then(checkResponse)
+    .catch((error) => {
+      console.error("Login request failed:", error);
+      throw error;
+    });
 };
 
 export const currencyUser = () => {
@@ -28,5 +38,10 @@ export const currencyUser = () => {
     headers: {
       Authorization: `Bearer ${accessApplication()}`,
     },
-  }).then(checkResponse);
+  })
+    .then(checkResponse)
+    .catch((error) => {
+      console.error("Get current user request failed:", error);
+      throw error;
+    });
 };
