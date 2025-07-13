@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalFormInput from "../ModalFormInput/ModalFormInput";
 import "./SignIn.css";
 import { currencyUser, loginUser } from "../../utils/user";
+import { useToast } from "../Toast/Toast";
 
 export default function SignIn({
   isOpen,
@@ -15,6 +16,7 @@ export default function SignIn({
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { toast } = useToast();
 
   const validateField = (fieldName, value) => {
     let error = "";
@@ -55,16 +57,8 @@ export default function SignIn({
           setUser({});
           localStorage.removeItem("app");
 
-          // Optionally show a subtle message that the session expired
-          setErrors((prev) => ({
-            ...prev,
-            general: "Your session has expired. Please log in again.",
-          }));
-
-          // Clear the message after 5 seconds
-          setTimeout(() => {
-            setErrors((prev) => ({ ...prev, general: "" }));
-          }, 5000);
+          // Use toast for session expiry notification
+          toast.info("Your session has expired. Please log in again.");
         });
     }
   }, [setIsLogging, setUser, setErrors]);
@@ -86,11 +80,12 @@ export default function SignIn({
           // Close modal on successful login
           setSaving(null);
           onClose();
+          toast.success("Successfully logged in!");
         })
         .catch((err) => {
           console.error("Login error:", err);
 
-          // Set user-friendly error messages
+          // Use toast for user-friendly error messages
           let errorMessage = "Login failed. Please try again.";
 
           if (
@@ -115,8 +110,8 @@ export default function SignIn({
             errorMessage = "Network error. Please check your connection.";
           }
 
-          // Set the error message for display
-          setErrors((prev) => ({ ...prev, general: errorMessage }));
+          // Show error via toast
+          toast.error(errorMessage);
           setSaving("Login Failed");
 
           // Reset saving state after 3 seconds

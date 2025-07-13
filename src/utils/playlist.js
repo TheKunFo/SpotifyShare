@@ -5,7 +5,7 @@ import { checkResponse } from "./response.js";
 export const getAllPlaylists = () => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error("You must be logged in to view playlists.");
+    throw new Error("Please log in to view your playlists.");
   }
 
   return fetch(`${getBaseUrl()}/playlists`, {
@@ -18,7 +18,20 @@ export const getAllPlaylists = () => {
     .then(checkResponse)
     .catch((err) => {
       console.error("Error fetching playlists:", err);
-      throw new Error("Failed to load playlists. Please try again.");
+
+      if (err.message.includes("401")) {
+        throw new Error("Your session has expired. Please log in again.");
+      } else if (err.message.includes("403")) {
+        throw new Error("You don't have permission to view playlists.");
+      } else if (err.message.includes("500")) {
+        throw new Error("Server error. Please try again in a few minutes.");
+      } else if (err.message.includes("Network")) {
+        throw new Error("Network error. Please check your connection.");
+      }
+
+      throw new Error(
+        err.message || "Failed to load playlists. Please try again."
+      );
     });
 };
 

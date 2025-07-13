@@ -34,16 +34,7 @@ export const getSpotifyAuthUrl = () => {
     show_dialog: "true",
   });
 
-  res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
-  );
+  const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
   console.log("Full Auth URL:", authUrl);
 
   return authUrl;
@@ -98,43 +89,74 @@ export const refreshSpotifyToken = async (refreshToken) => {
 export const getSpotifyUserProfile = async () => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
-    throw new Error("No Spotify access token available");
+    throw new Error("Please connect your Spotify account first");
   }
 
-  const response = await fetch("https://api.spotify.com/v1/me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to get user profile");
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Token expired, clear stored tokens
+        localStorage.removeItem("spotify_access_token");
+        localStorage.removeItem("spotify_refresh_token");
+        localStorage.removeItem("spotify_token_expiry");
+        throw new Error(
+          "Spotify session expired. Please reconnect your account."
+        );
+      }
+      throw new Error(`Failed to get user profile: ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching Spotify user profile:", error);
+    throw new Error(
+      error.message || "Failed to load Spotify profile. Please try again."
+    );
   }
-
-  return response.json();
 };
 
 // Get user's Spotify playlists
 export const getSpotifyPlaylists = async (limit = 20, offset = 0) => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
-    throw new Error("No Spotify access token available");
+    throw new Error("Please connect your Spotify account to view playlists");
   }
 
-  const response = await fetch(
-    `https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem("spotify_access_token");
+        localStorage.removeItem("spotify_refresh_token");
+        localStorage.removeItem("spotify_token_expiry");
+        throw new Error(
+          "Spotify session expired. Please reconnect your account."
+        );
+      }
+      throw new Error(`Failed to get playlists: ${response.statusText}`);
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to get playlists");
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching Spotify playlists:", error);
+    throw new Error(
+      error.message || "Failed to load Spotify playlists. Please try again."
+    );
   }
-
-  return response.json();
 };
 
 export const getAlbum = (params = {}) => {
@@ -233,23 +255,60 @@ export const disconnectFromSpotify = () => {
 export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
-    throw new Error("No Spotify access token available");
+    throw new Error(
+      "Please connect your Spotify account to access this feature"
+    );
   }
 
-  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    method,
-    body: body ? JSON.stringify(body) : null,
-  });
+  try {
+    const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      method,
+      body: body ? JSON.stringify(body) : null,
+    });
 
-  if (!res.ok) {
-    throw new Error(`Spotify API error: ${res.status} ${res.statusText}`);
+    if (!res.ok) {
+      let errorMessage = `Spotify API error: ${res.status}`;
+
+      try {
+        const errorData = await res.json();
+        if (errorData.error && errorData.error.message) {
+          errorMessage = errorData.error.message;
+        }
+      } catch (parseError) {
+        // If error response is not JSON, use status text
+        errorMessage = res.statusText || errorMessage;
+      }
+
+      if (res.status === 401) {
+        // Token expired, clear stored tokens
+        localStorage.removeItem("spotify_access_token");
+        localStorage.removeItem("spotify_refresh_token");
+        localStorage.removeItem("spotify_token_expiry");
+        throw new Error(
+          "Spotify session expired. Please reconnect your account."
+        );
+      } else if (res.status === 403) {
+        throw new Error(
+          "Access denied. You may need additional Spotify permissions."
+        );
+      } else if (res.status === 429) {
+        throw new Error(
+          "Too many requests to Spotify. Please wait a moment and try again."
+        );
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error(`Spotify API error for ${endpoint}:`, error);
+    throw error;
   }
-
-  return await res.json();
 };
 
 // Get user's top tracks

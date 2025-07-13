@@ -7,6 +7,7 @@ import {
   getTopTracks,
   getTopArtists,
 } from "../../utils/spotify";
+import { useToast } from "../Toast/Toast";
 import "./SpotifyConnect.css";
 
 const SpotifyConnect = () => {
@@ -17,6 +18,7 @@ const SpotifyConnect = () => {
   const [topArtists, setTopArtists] = useState([]);
   const [showingTracks, setShowingTracks] = useState(true);
   const [error, setError] = useState(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     checkConnection();
@@ -25,13 +27,13 @@ const SpotifyConnect = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get("error");
     if (error === "access_denied") {
-      setError(
+      toast.error(
         "Spotify authorization was denied. Please try again and grant the required permissions."
       );
     } else if (error) {
-      setError(`Spotify authorization error: ${error}`);
+      toast.error(`Spotify authorization error: ${error}`);
     }
-  }, []);
+  }, [toast]);
 
   const checkConnection = async () => {
     const connected = isSpotifyConnected();
@@ -39,6 +41,7 @@ const SpotifyConnect = () => {
 
     if (connected) {
       try {
+        setError(null); // Clear any previous errors
         const profile = await getSpotifyUserProfile();
         setUserProfile(profile);
 
@@ -57,9 +60,30 @@ const SpotifyConnect = () => {
         );
       } catch (error) {
         console.error("Failed to get user profile or music data:", error);
-        // Token might be expired, disconnect
-        disconnectFromSpotify();
-        setIsConnected(false);
+
+        // Use toast for user-friendly error messages
+        if (
+          error.message.includes("session expired") ||
+          error.message.includes("reconnect")
+        ) {
+          toast.error(
+            "Your Spotify session has expired. Please reconnect your account."
+          );
+          disconnectFromSpotify();
+          setIsConnected(false);
+          setUserProfile(null);
+          setTopTracks([]);
+          setTopArtists([]);
+        } else if (error.message.includes("permissions")) {
+          toast.error(
+            "Insufficient Spotify permissions. Please reconnect and grant all requested permissions."
+          );
+        } else {
+          toast.error(
+            error.message ||
+              "Failed to load Spotify data. Please try reconnecting."
+          );
+        }
       }
     }
   };
@@ -72,14 +96,14 @@ const SpotifyConnect = () => {
       // Set a timeout to detect if user doesn't return (potential redirect URI error)
       setTimeout(() => {
         if (isLoading) {
-          setError(
+          toast.error(
             "INVALID_CLIENT: Invalid redirect URI - Please configure your Spotify app settings"
           );
           setIsLoading(false);
         }
       }, 3000);
     } catch (err) {
-      setError("Failed to connect to Spotify. Please try again.");
+      toast.error("Failed to connect to Spotify. Please try again.");
       setIsLoading(false);
     }
   };

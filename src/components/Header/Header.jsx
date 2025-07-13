@@ -11,7 +11,7 @@ export default function Header({
 }) {
   const { currentUser } = useContext(CurrencyAuthUser);
   return (
-    <header>
+    <header className="header">
       <div className="header__container">
         <div className="header__logo">
           <h2 className="header__title">Spotify Playlist Share</h2>

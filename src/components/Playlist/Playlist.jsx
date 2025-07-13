@@ -10,9 +10,11 @@ import {
   unlikePlaylist,
 } from "../../utils/playlist";
 import { searchSpotify } from "../../utils/spotify";
+import { useToast } from "../Toast/Toast";
 
 export default function Playlist() {
   const { currentUser } = useContext(CurrencyAuthUser);
+  const { toast } = useToast();
   const [playlists, setPlaylists] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPlaylist, setNewPlaylist] = useState({
@@ -37,7 +39,7 @@ export default function Playlist() {
 
   const loadPlaylists = () => {
     if (!currentUser) {
-      setError("Please log in to view playlists.");
+      toast.error("Please log in to view playlists.");
       return;
     }
 
@@ -48,7 +50,7 @@ export default function Playlist() {
         setError("");
       })
       .catch((err) => {
-        setError(err.message);
+        toast.error(err.message);
         console.error("Failed to load playlists:", err);
       })
       .finally(() => {
@@ -73,9 +75,12 @@ export default function Playlist() {
           setNewPlaylist({ name: "", description: "", isPublic: true });
           setShowCreateModal(false);
           setError("");
+          toast.success(
+            `Playlist "${data.playlist.name}" created successfully!`
+          );
         })
         .catch((err) => {
-          setError(err.message);
+          toast.error(err.message);
         })
         .finally(() => {
           setIsLoading(false);
@@ -90,9 +95,10 @@ export default function Playlist() {
         .then(() => {
           setPlaylists((prev) => prev.filter((p) => p._id !== playlistId));
           setError("");
+          toast.success("Playlist deleted successfully!");
         })
         .catch((err) => {
-          setError(err.message);
+          toast.error(err.message);
         })
         .finally(() => {
           setIsLoading(false);
@@ -125,9 +131,12 @@ export default function Playlist() {
           );
           setEditingPlaylist(null);
           setError("");
+          toast.success(
+            `Playlist "${data.playlist.name}" updated successfully!`
+          );
         })
         .catch((err) => {
-          setError(err.message);
+          toast.error(err.message);
         })
         .finally(() => {
           setIsLoading(false);
@@ -137,7 +146,7 @@ export default function Playlist() {
 
   const handleLikePlaylist = (playlistId) => {
     if (!currentUser) {
-      setError("Please login to like playlists");
+      toast.error("Please login to like playlists");
       return;
     }
 
@@ -149,9 +158,10 @@ export default function Playlist() {
           prev.map((p) => (p._id === playlistId ? { ...p, isLiked: true } : p))
         );
         setError("");
+        toast.success("Playlist liked!");
       })
       .catch((err) => {
-        setError(err.message);
+        toast.error(err.message);
       })
       .finally(() => {
         setLikingPlaylist(null);
@@ -160,7 +170,7 @@ export default function Playlist() {
 
   const handleUnlikePlaylist = (playlistId) => {
     if (!currentUser) {
-      setError("Please login to unlike playlists");
+      toast.error("Please login to unlike playlists");
       return;
     }
 
@@ -172,9 +182,10 @@ export default function Playlist() {
           prev.map((p) => (p._id === playlistId ? { ...p, isLiked: false } : p))
         );
         setError("");
+        toast.success("Playlist unliked!");
       })
       .catch((err) => {
-        setError(err.message);
+        toast.error(err.message);
       })
       .finally(() => {
         setLikingPlaylist(null);

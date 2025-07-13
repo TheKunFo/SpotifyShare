@@ -2,6 +2,7 @@ import { useState } from "react";
 import ModalFormInput from "../ModalFormInput/ModalFormInput";
 import "./SignUp.css";
 import { createUser } from "../../utils/user";
+import { useToast } from "../Toast/Toast";
 
 export default function SignUp({
   isOpen,
@@ -17,6 +18,7 @@ export default function SignUp({
     name: "",
     avatar: "",
   });
+  const { toast } = useToast();
 
   const handleSubmitSignUp = (e) => {
     e.preventDefault();
@@ -31,6 +33,7 @@ export default function SignUp({
         .then((response) => {
           console.log("Successfully create account", response.data);
           setSaving("Account Created");
+          toast.success("Account created successfully! You can now sign in.");
 
           // Close modal on successful signup
           setTimeout(() => {
@@ -41,7 +44,7 @@ export default function SignUp({
         .catch((err) => {
           console.error("Signup error:", err);
 
-          // Set user-friendly error messages
+          // Use toast for user-friendly error messages
           let errorMessage = "Signup failed. Please try again.";
 
           if (err.message.includes("409") || err.message.includes("Conflict")) {
@@ -64,8 +67,8 @@ export default function SignUp({
             errorMessage = "Network error. Please check your connection.";
           }
 
-          // Set the error message for display
-          setErrors((prev) => ({ ...prev, general: errorMessage }));
+          // Show error via toast
+          toast.error(errorMessage);
           setSaving("Signup Failed");
 
           // Reset saving state after 3 seconds
