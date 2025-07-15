@@ -46,6 +46,22 @@ export const currencyUser = () => {
     });
 };
 
+export const updateUser = ({ name, email, avatar }) => {
+  return fetch(`${BASE_URL_BACKEND}/users/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${accessApplication()}`,
+    },
+    body: JSON.stringify({ name, email, avatar }),
+  })
+    .then(checkResponse)
+    .catch((error) => {
+      console.error("Update user request failed:", error);
+      throw error;
+    });
+};
+
 export const logoutUser = () => {
   // Clear tokens from localStorage
   localStorage.removeItem("token");

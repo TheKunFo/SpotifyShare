@@ -80,7 +80,9 @@ function App() {
     <ErrorBoundary>
       <ToastProvider>
         <BrowserRouter>
-          <CurrencyAuthUser.Provider value={{ currentUser: user, isLogging }}>
+          <CurrencyAuthUser.Provider
+            value={{ currentUser: user, setCurrentUser: setUser, isLogging }}
+          >
             <CurrencyAuthSpotify.Provider value={authSpotify}>
               <ResponsiveContainer>
                 <div className="app">

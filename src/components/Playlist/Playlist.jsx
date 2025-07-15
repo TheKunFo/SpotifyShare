@@ -11,17 +11,16 @@ import {
 } from "../../utils/playlist";
 import { searchSpotify } from "../../utils/spotify";
 import { useToast } from "../Toast/Toast";
+import { Modal } from "../Modal/Modal.jsx";
+import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 
 export default function Playlist() {
   const { currentUser } = useContext(CurrencyAuthUser);
   const { toast } = useToast();
   const [playlists, setPlaylists] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newPlaylist, setNewPlaylist] = useState({
-    name: "",
-    description: "",
-    isPublic: true,
-  });
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [error, setError] = useState("");
@@ -58,33 +57,33 @@ export default function Playlist() {
       });
   };
 
-  const handleCreatePlaylist = (e) => {
+  const handleCreatePlaylist = async (e) => {
     e.preventDefault();
-    if (newPlaylist.name.trim()) {
-      setIsLoading(true);
+    if (!isValid) return;
 
+    setIsLoading(true);
+
+    try {
       const playlistData = {
-        name: newPlaylist.name,
-        description: newPlaylist.description,
+        name: values.name,
+        description: values.description || "",
         items: [],
+        isPublic: values.isPublic !== false, // default to true if not set
       };
 
-      createPlaylist(playlistData)
-        .then((data) => {
-          setPlaylists((prev) => [data.playlist, ...prev]);
-          setNewPlaylist({ name: "", description: "", isPublic: true });
-          setShowCreateModal(false);
-          setError("");
-          toast.success(
-            `Playlist "${data.playlist.name}" created successfully!`
-          );
-        })
-        .catch((err) => {
-          toast.error(err.message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      const data = await createPlaylist(playlistData);
+      setPlaylists((prev) => [data.playlist, ...prev]);
+      resetForm();
+      setShowCreateModal(false);
+      setError("");
+      toast.success(`Playlist "${data.playlist.name}" created successfully!`);
+    } catch (err) {
+      console.error("Create playlist error:", err);
+      toast.error(
+        err.message || "Failed to create playlist. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -534,90 +533,87 @@ export default function Playlist() {
 
         {/* Create Playlist Modal */}
         {showCreateModal && (
-          <div
-            className="playlist__modal-overlay"
-            onClick={() => setShowCreateModal(false)}
+          <Modal
+            name="create-playlist"
+            onClose={() => {
+              setShowCreateModal(false);
+              resetForm();
+            }}
           >
-            <div
-              className="playlist__modal"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="playlist__modal-header">
-                <h2>Create New Playlist</h2>
-                <button
-                  className="playlist__modal-close"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  ✖
-                </button>
+            <div className="playlist__modal-header">
+              <h2>Create New Playlist</h2>
+            </div>
+
+            <form onSubmit={handleCreatePlaylist} className="playlist__form">
+              <div className="playlist__form-group">
+                <label htmlFor="name">Playlist Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={values.name || ""}
+                  onChange={handleChange}
+                  placeholder="Enter playlist name"
+                  required
+                  minLength="1"
+                  maxLength="100"
+                />
+                {errors.name && (
+                  <span className="playlist__error">{errors.name}</span>
+                )}
               </div>
 
-              <form onSubmit={handleCreatePlaylist} className="playlist__form">
-                <div className="playlist__form-group">
-                  <label htmlFor="playlistName">Playlist Name *</label>
+              <div className="playlist__form-group">
+                <label htmlFor="description">Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={values.description || ""}
+                  onChange={handleChange}
+                  placeholder="Describe your playlist..."
+                  rows="3"
+                  maxLength="300"
+                />
+                {errors.description && (
+                  <span className="playlist__error">{errors.description}</span>
+                )}
+              </div>
+
+              <div className="playlist__form-group">
+                <label className="playlist__checkbox-label">
                   <input
-                    type="text"
-                    id="playlistName"
-                    value={newPlaylist.name}
-                    onChange={(e) =>
-                      setNewPlaylist((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter playlist name"
-                    required
+                    type="checkbox"
+                    name="isPublic"
+                    checked={values.isPublic !== false}
+                    onChange={handleChange}
                   />
-                </div>
+                  <span className="playlist__checkbox-custom"></span>
+                  Make this playlist public
+                </label>
+              </div>
 
-                <div className="playlist__form-group">
-                  <label htmlFor="playlistDescription">Description</label>
-                  <textarea
-                    id="playlistDescription"
-                    value={newPlaylist.description}
-                    onChange={(e) =>
-                      setNewPlaylist((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    placeholder="Describe your playlist..."
-                    rows="3"
-                  />
-                </div>
-
-                <div className="playlist__form-group">
-                  <label className="playlist__checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={newPlaylist.isPublic}
-                      onChange={(e) =>
-                        setNewPlaylist((prev) => ({
-                          ...prev,
-                          isPublic: e.target.checked,
-                        }))
-                      }
-                    />
-                    <span className="playlist__checkbox-custom"></span>
-                    Make this playlist public
-                  </label>
-                </div>
-
-                <div className="playlist__form-actions">
-                  <button type="submit" className="playlist__submit-btn">
-                    Create Playlist
-                  </button>
-                  <button
-                    type="button"
-                    className="playlist__cancel-btn"
-                    onClick={() => setShowCreateModal(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+              <div className="playlist__form-actions">
+                <button
+                  type="submit"
+                  className="playlist__submit-btn"
+                  disabled={!isValid || isLoading}
+                >
+                  {isLoading ? "Creating..." : "Create Playlist"}
+                </button>
+                <button
+                  type="button"
+                  className="playlist__cancel-btn"
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </Modal>
         )}
       </div>
     </main>

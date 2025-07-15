@@ -188,6 +188,13 @@
   margin-bottom: 2rem;
 }
 
+.playlist__error {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
+}
+
 .playlist__retry-btn {
   padding: 0.5rem 1rem;
   background: #ef4444;

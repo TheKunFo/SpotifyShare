@@ -2,26 +2,50 @@ import { useContext, useState } from "react";
 import "./Profile.css";
 import CurrencyAuthUser from "../../contexts/CurrencyAuthUser";
 import SpotifyConnect from "../SpotifyConnect/SpotifyConnect";
+import { useFormAndValidation } from "../../hooks/useFormAndValidation";
+import { updateUser } from "../../utils/user";
 
 export default function Profile() {
-  const { currentUser } = useContext(CurrencyAuthUser);
+  const { currentUser, setCurrentUser } = useContext(CurrencyAuthUser);
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({
-    name: currentUser?.name || "",
-    email: currentUser?.email || "",
-    avatar: currentUser?.avatar || "",
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const { values, handleChange, errors, isValid, setValues, resetForm } =
+    useFormAndValidation();
 
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Implement profile update API call
-    console.log("Profile update:", editForm);
-    setIsEditing(false);
+  // Initialize form with current user data when editing starts
+  const handleEditStart = () => {
+    setValues({
+      name: currentUser?.name || "",
+      email: currentUser?.email || "",
+      avatar: currentUser?.avatar || "",
+    });
+    setIsEditing(true);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    setIsLoading(true);
+    try {
+      const updatedUser = await updateUser(values);
+      setCurrentUser(updatedUser);
+      setIsEditing(false);
+      resetForm();
+      // You can add a success toast here
+      console.log("Profile updated successfully!");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      // You can add an error toast here
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setIsEditing(false);
+    resetForm();
   };
 
   return (
@@ -39,10 +63,7 @@ export default function Profile() {
             {currentUser?.name || "Guest User"}
           </h2>
           <p className="profile__email">{currentUser?.email || "No email"}</p>
-          <button
-            className="profile__edit-btn"
-            onClick={() => setIsEditing(!isEditing)}
-          >
+          <button className="profile__edit-btn" onClick={handleEditStart}>
             {isEditing ? "Cancel" : "Edit Profile"}
           </button>
         </div>
@@ -75,11 +96,14 @@ export default function Profile() {
                   type="text"
                   id="name"
                   name="name"
-                  value={editForm.name}
-                  onChange={handleInputChange}
+                  value={values.name || ""}
+                  onChange={handleChange}
                   placeholder="Enter your name"
                   required
                 />
+                {errors.name && (
+                  <span className="profile__error">{errors.name}</span>
+                )}
               </div>
 
               <div className="profile__form-group">
@@ -88,11 +112,14 @@ export default function Profile() {
                   type="email"
                   id="email"
                   name="email"
-                  value={editForm.email}
-                  onChange={handleInputChange}
+                  value={values.email || ""}
+                  onChange={handleChange}
                   placeholder="Enter your email"
                   required
                 />
+                {errors.email && (
+                  <span className="profile__error">{errors.email}</span>
+                )}
               </div>
 
               <div className="profile__form-group">
@@ -101,20 +128,28 @@ export default function Profile() {
                   type="url"
                   id="avatar"
                   name="avatar"
-                  value={editForm.avatar}
-                  onChange={handleInputChange}
+                  value={values.avatar || ""}
+                  onChange={handleChange}
                   placeholder="Enter avatar image URL"
                 />
+                {errors.avatar && (
+                  <span className="profile__error">{errors.avatar}</span>
+                )}
               </div>
 
               <div className="profile__form-actions">
-                <button type="submit" className="profile__save-btn">
-                  Save Changes
+                <button
+                  type="submit"
+                  className="profile__save-btn"
+                  disabled={!isValid || isLoading}
+                >
+                  {isLoading ? "Saving..." : "Save Changes"}
                 </button>
                 <button
                   type="button"
                   className="profile__cancel-btn"
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleEditCancel}
+                  disabled={isLoading}
                 >
                   Cancel
                 </button>
