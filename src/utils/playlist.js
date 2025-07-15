@@ -3,7 +3,8 @@ import { checkResponse } from "./response.js";
 
 // Get all playlists
 export const getAllPlaylists = () => {
-  const token = getAuthToken();
+  // const token = getAuthToken();
+  const token = localStorage.getItem("app");
   if (!token) {
     throw new Error("Please log in to view your playlists.");
   }
@@ -58,7 +59,8 @@ export const getPlaylistById = (id) => {
 
 // Create new playlist
 export const createPlaylist = (playlistData) => {
-  const token = getAuthToken();
+  //const token = getAuthToken();
+  const token = localStorage.getItem("app");
   if (!token) {
     throw new Error("You must be logged in to create a playlist.");
   }
