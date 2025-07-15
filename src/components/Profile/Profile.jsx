@@ -106,7 +106,7 @@ export default function Profile() {
                 )}
               </div>
 
-              <div className="profile__form-group">
+              {/* <div className="profile__form-group">
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
@@ -120,7 +120,7 @@ export default function Profile() {
                 {errors.email && (
                   <span className="profile__error">{errors.email}</span>
                 )}
-              </div>
+              </div> */}
 
               <div className="profile__form-group">
                 <label htmlFor="avatar">Avatar URL</label>
