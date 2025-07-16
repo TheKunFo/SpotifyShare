@@ -333,6 +333,25 @@
   color: #999;
 }
 
+/* Error Styles */
+.profile__error {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Disabled Button Styles */
+.profile__save-btn:disabled,
+.profile__cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile__save-btn:disabled:hover {
+  background-color: #1db954;
+}
+
 /* Responsive adjustments for Profile */
 @media (max-width: 768px) {
   .profile__container {

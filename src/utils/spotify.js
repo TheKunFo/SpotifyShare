@@ -1,6 +1,12 @@
 import { CLIENT_ID, CLIENT_SECRET, accessToken } from "./api";
 import { checkResponse } from "./response";
 
+// Spotify API base URL
+const SPOTIFY_URL = "https://api.spotify.com/v1";
+
+// Spotify Accounts API base URL
+const SPOTIFY_ACCOUNT_URL = "https://accounts.spotify.com";
+
 // Spotify Authorization URL for user login
 export const getSpotifyAuthUrl = () => {
   const scopes = [
@@ -34,7 +40,7 @@ export const getSpotifyAuthUrl = () => {
     show_dialog: "true",
   });
 
-  const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
+  const authUrl = `${SPOTIFY_ACCOUNT_URL}/authorize?${params.toString()}`;
   console.log("Full Auth URL:", authUrl);
 
   return authUrl;
@@ -42,7 +48,7 @@ export const getSpotifyAuthUrl = () => {
 
 // Exchange authorization code for access token
 export const exchangeCodeForToken = async (code) => {
-  const response = await fetch("https://accounts.spotify.com/api/token", {
+  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -66,7 +72,7 @@ export const exchangeCodeForToken = async (code) => {
 
 // Refresh Spotify access token
 export const refreshSpotifyToken = async (refreshToken) => {
-  const response = await fetch("https://accounts.spotify.com/api/token", {
+  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -93,7 +99,7 @@ export const getSpotifyUserProfile = async () => {
   }
 
   try {
-    const response = await fetch("https://api.spotify.com/v1/me", {
+    const response = await fetch(`${SPOTIFY_URL}/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -130,7 +136,7 @@ export const getSpotifyPlaylists = async (limit = 20, offset = 0) => {
 
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`,
+      `${SPOTIFY_URL}/me/playlists?limit=${limit}&offset=${offset}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -168,7 +174,7 @@ export const getAlbum = (params = {}) => {
   } = params;
 
   return fetch(
-    `https://api.spotify.com/v1/search?q=${q}&type=${type}&limit=${limit}&offset=${offset}`,
+    `${SPOTIFY_URL}/search?q=${q}&type=${type}&limit=${limit}&offset=${offset}`,
     {
       method: "GET",
       headers: {
@@ -196,7 +202,7 @@ export const searchSpotify = (query, type = "track", limit = 20) => {
     limit: limit.toString(),
   });
 
-  return fetch(`https://api.spotify.com/v1/search?${searchParams}`, {
+  return fetch(`${SPOTIFY_URL}/search?${searchParams}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -212,7 +218,7 @@ export const searchSpotify = (query, type = "track", limit = 20) => {
 
 // Legacy client credentials authentication (for public data only)
 export const authenticationSpotify = () => {
-  return fetch("https://accounts.spotify.com/api/token", {
+  return fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
     method: "POST",
     headers: {
       "Content-type": "application/x-www-form-urlencoded",

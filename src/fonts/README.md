@@ -16,12 +16,15 @@ src/fonts/
 ## Current Font Setup
 
 ### Primary Fonts
+
 - **Inter**: Primary body text font (300, 400, 500, 600, 700 weights)
 - **Poppins**: Heading font (300, 400, 500, 600, 700 weights)
 - **Roboto**: Secondary/alternative font (300, 400, 500, 700 weights)
 
 ### Font Loading Strategy
+
 Currently using optimized `@font-face` declarations that load fonts from Google Fonts CDN with:
+
 - `font-display: swap` for better perceived performance
 - Proper fallback font stacks
 - Performance optimizations (preloading, loading states)
@@ -49,6 +52,7 @@ Use these CSS custom properties in your components:
 ```css
 /* Font families */
 .font-primary     /* Apply Inter font */
+/* Apply Inter font */
 .font-secondary   /* Apply Roboto font */
 .font-heading     /* Apply Poppins font */
 
@@ -57,12 +61,13 @@ Use these CSS custom properties in your components:
 .font-normal      /* 400 weight */
 .font-medium      /* 500 weight */
 .font-semibold    /* 600 weight */
-.font-bold        /* 700 weight */
+.font-bold; /* 700 weight */
 ```
 
 ## Usage Examples
 
 ### In CSS
+
 ```css
 .my-component {
   font-family: var(--font-primary);
@@ -76,6 +81,7 @@ Use these CSS custom properties in your components:
 ```
 
 ### In JSX with utility classes
+
 ```jsx
 <h1 className="font-heading font-semibold">Page Title</h1>
 <p className="font-primary font-normal">Body text</p>
@@ -88,6 +94,7 @@ To use local font files instead of CDN:
 
 1. **Download font files** (preferably .woff2 format for best compression)
 2. **Place files** in `src/fonts/files/` directory:
+
    ```
    src/fonts/files/
    ├── inter/
@@ -101,10 +108,11 @@ To use local font files instead of CDN:
    ```
 
 3. **Update font declarations** in `src/fonts/local-fonts.css`:
+
    ```css
    @font-face {
-     font-family: 'Inter';
-     src: url('./files/inter/Inter-Regular.woff2') format('woff2');
+     font-family: "Inter";
+     src: url("./files/inter/Inter-Regular.woff2") format("woff2");
      font-weight: 400;
      font-style: normal;
      font-display: swap;
@@ -112,8 +120,9 @@ To use local font files instead of CDN:
    ```
 
 4. **Import local fonts** in `src/fonts/index.css`:
+
    ```css
-   @import './local-fonts.css';
+   @import "./local-fonts.css";
    ```
 
 5. **Comment out** the CDN-based `@font-face` declarations
@@ -131,8 +140,8 @@ To use local font files instead of CDN:
 The system dispatches a `fontsReady` event when fonts are loaded:
 
 ```javascript
-document.addEventListener('fontsReady', (event) => {
-  console.log('Fonts loaded:', event.detail);
+document.addEventListener("fontsReady", (event) => {
+  console.log("Fonts loaded:", event.detail);
 });
 ```
 
