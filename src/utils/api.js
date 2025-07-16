@@ -3,7 +3,7 @@ export const CLIENT_SECRET = "81526518e36446eea552ef803ad36c3f";
 export const BASE_URL_BACKEND =
   import.meta.env && import.meta.env.MODE === "production"
     ? "https://apispotify.thekunfo.com"
-    : "http://127.0.0.1:3002";
+    : "http://localhost:3002";
 export const accessToken = () => {
   const token = localStorage.getItem("token");
   if (!token) {
