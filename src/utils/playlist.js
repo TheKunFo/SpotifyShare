@@ -4,7 +4,8 @@ import { accessApplication } from "./api";
 
 // Get all playlists
 export const getAllPlaylists = () => {
-  const token = getAuthToken();
+  // const token = getAuthToken();
+  const token = localStorage.getItem("app");
   if (!token) {
     throw new Error("Please log in to view your playlists.");
   }
@@ -59,7 +60,12 @@ export const getPlaylistById = (id) => {
 
 // Create new playlist
 export const createPlaylist = (playlistData) => {
+<<<<<<< HEAD
   const token = accessApplication();
+=======
+  //const token = getAuthToken();
+  const token = localStorage.getItem("app");
+>>>>>>> 74370f39ffff626b477b9240ed04e464d5415270
   if (!token) {
     throw new Error("You must be logged in to create a playlist.");
   }

@@ -4,6 +4,9 @@ import { checkResponse } from "./response";
 // Spotify API base URL
 const SPOTIFY_URL = "https://api.spotify.com/v1";
 
+// Spotify Accounts API base URL
+const SPOTIFY_ACCOUNT_URL = "https://accounts.spotify.com";
+
 // Spotify Authorization URL for user login
 export const getSpotifyAuthUrl = () => {
   const scopes = [
@@ -37,15 +40,20 @@ export const getSpotifyAuthUrl = () => {
     show_dialog: "true",
   });
 
-  const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
+  const authUrl = `${SPOTIFY_ACCOUNT_URL}/authorize?${params.toString()}`;
   console.log("Full Auth URL:", authUrl);
 
   return authUrl;
 };
 
 // Exchange authorization code for access token
+<<<<<<< HEAD
 export const exchangeCodeForToken = (code) => {
   const response = fetch("https://accounts.spotify.com/api/token", {
+=======
+export const exchangeCodeForToken = async (code) => {
+  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
+>>>>>>> 74370f39ffff626b477b9240ed04e464d5415270
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -68,8 +76,13 @@ export const exchangeCodeForToken = (code) => {
 };
 
 // Refresh Spotify access token
+<<<<<<< HEAD
 export const refreshSpotifyToken = (refreshToken) => {
   const response = fetch("https://accounts.spotify.com/api/token", {
+=======
+export const refreshSpotifyToken = async (refreshToken) => {
+  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
+>>>>>>> 74370f39ffff626b477b9240ed04e464d5415270
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -215,7 +228,7 @@ export const searchSpotify = (query, type = "track", limit = 20) => {
 
 // Legacy client credentials authentication (for public data only)
 export const authenticationSpotify = () => {
-  return fetch("https://accounts.spotify.com/api/token", {
+  return fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
     method: "POST",
     headers: {
       "Content-type": "application/x-www-form-urlencoded",
