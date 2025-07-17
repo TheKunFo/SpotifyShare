@@ -47,13 +47,8 @@ export const getSpotifyAuthUrl = () => {
 };
 
 // Exchange authorization code for access token
-<<<<<<< HEAD
 export const exchangeCodeForToken = (code) => {
   const response = fetch("https://accounts.spotify.com/api/token", {
-=======
-export const exchangeCodeForToken = async (code) => {
-  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
->>>>>>> 74370f39ffff626b477b9240ed04e464d5415270
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -76,13 +71,8 @@ export const exchangeCodeForToken = async (code) => {
 };
 
 // Refresh Spotify access token
-<<<<<<< HEAD
 export const refreshSpotifyToken = (refreshToken) => {
   const response = fetch("https://accounts.spotify.com/api/token", {
-=======
-export const refreshSpotifyToken = async (refreshToken) => {
-  const response = await fetch(`${SPOTIFY_ACCOUNT_URL}/api/token`, {
->>>>>>> 74370f39ffff626b477b9240ed04e464d5415270
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
