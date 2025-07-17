@@ -16,27 +16,28 @@ export default function Profile() {
   const handleEditStart = () => {
     setValues({
       name: currentUser?.name || "",
-      email: currentUser?.email || "",
       avatar: currentUser?.avatar || "",
     });
     setIsEditing(true);
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleEditSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
 
     setIsLoading(true);
     try {
-      const updatedUser = await updateUser(values);
-      setCurrentUser(updatedUser);
+      // promise
+      updateUser(values).then((updatedUser) => {
+        setCurrentUser(updatedUser.data);
+        console.log(values);
+        console.log(updatedUser);
+      });
       setIsEditing(false);
       resetForm();
-      // You can add a success toast here
       console.log("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
-      // You can add an error toast here
       alert("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
@@ -106,7 +107,7 @@ export default function Profile() {
                 )}
               </div>
 
-              <div className="profile__form-group">
+              {/* <div className="profile__form-group">
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
@@ -120,7 +121,7 @@ export default function Profile() {
                 {errors.email && (
                   <span className="profile__error">{errors.email}</span>
                 )}
-              </div>
+              </div> */}
 
               <div className="profile__form-group">
                 <label htmlFor="avatar">Avatar URL</label>

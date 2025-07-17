@@ -7,7 +7,7 @@ const SpotifyCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const handleCallback = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get("code");
       const error = urlParams.get("error");
@@ -21,7 +21,7 @@ const SpotifyCallback = () => {
       if (code) {
         try {
           setStatus("Exchanging authorization code...");
-          const tokenData = await exchangeCodeForToken(code);
+          const tokenData = exchangeCodeForToken(code);
 
           // Store tokens
           localStorage.setItem("spotify_access_token", tokenData.access_token);

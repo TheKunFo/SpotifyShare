@@ -1,5 +1,6 @@
 import { getBaseUrl, getAuthToken } from "./api.js";
 import { checkResponse } from "./response.js";
+import { accessApplication } from "./api";
 
 // Get all playlists
 export const getAllPlaylists = () => {
@@ -58,7 +59,7 @@ export const getPlaylistById = (id) => {
 
 // Create new playlist
 export const createPlaylist = (playlistData) => {
-  const token = getAuthToken();
+  const token = accessApplication();
   if (!token) {
     throw new Error("You must be logged in to create a playlist.");
   }
@@ -70,12 +71,7 @@ export const createPlaylist = (playlistData) => {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(playlistData),
-  })
-    .then(checkResponse)
-    .catch((err) => {
-      console.error("Error creating playlist:", err);
-      throw new Error("Failed to create playlist. Please try again.");
-    });
+  }).then(checkResponse);
 };
 
 // Update playlist

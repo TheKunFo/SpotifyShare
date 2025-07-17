@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import ModalFormInput from "../ModalFormInput/ModalFormInput";
 import "./SignIn.css";
 import { currencyUser, loginUser } from "../../utils/user";
-import { useToast } from "../Toast/Toast";
 
 export default function SignIn({
   isOpen,
@@ -16,7 +15,7 @@ export default function SignIn({
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { toast } = useToast();
+  const [successMessage, setSuccessMessage] = useState("");
 
   const validateField = (fieldName, value) => {
     let error = "";
@@ -57,8 +56,10 @@ export default function SignIn({
           setUser({});
           localStorage.removeItem("app");
 
-          // Use toast for session expiry notification
-          toast.info("Your session has expired. Please log in again.");
+          // Session expired - will be shown in error state instead
+          setErrors({
+            general: "Your session has expired. Please log in again.",
+          });
         });
     }
   }, [setIsLogging, setUser, setErrors]);
@@ -80,12 +81,12 @@ export default function SignIn({
           // Close modal on successful login
           setSaving(null);
           onClose();
-          toast.success("Successfully logged in!");
+          setSuccessMessage("Successfully logged in!");
         })
         .catch((err) => {
           console.error("Login error:", err);
 
-          // Use toast for user-friendly error messages
+          // Use error state for user-friendly error messages
           let errorMessage = "Login failed. Please try again.";
 
           if (
@@ -110,8 +111,8 @@ export default function SignIn({
             errorMessage = "Network error. Please check your connection.";
           }
 
-          // Show error via toast
-          toast.error(errorMessage);
+          // Show error via error state
+          setErrors({ general: errorMessage });
           setSaving("Login Failed");
 
           // Reset saving state after 3 seconds
@@ -165,6 +166,21 @@ export default function SignIn({
             }}
           >
             {errors.general}
+          </span>
+        </div>
+      )}
+      {successMessage && (
+        <div className="form__group">
+          <span
+            className="success"
+            style={{
+              display: "block",
+              textAlign: "center",
+              marginBottom: "1rem",
+              color: "green",
+            }}
+          >
+            {successMessage}
           </span>
         </div>
       )}

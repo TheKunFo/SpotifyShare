@@ -14,8 +14,6 @@ import { currencyUser, logoutUser } from "./utils/user";
 import Profile from "./components/Profile/Profile";
 import Playlist from "./components/Playlist/Playlist";
 import SpotifyCallback from "./components/SpotifyCallback/SpotifyCallback";
-import { ToastProvider } from "./components/Toast/Toast";
-import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 function App() {
   const [activeItem, setActiveItem] = useState(null);
@@ -77,64 +75,58 @@ function App() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <ToastProvider>
-        <BrowserRouter>
-          <CurrencyAuthUser.Provider
-            value={{ currentUser: user, setCurrentUser: setUser, isLogging }}
-          >
-            <CurrencyAuthSpotify.Provider value={authSpotify}>
-              <ResponsiveContainer>
-                <div className="app">
-                  <Header
-                    setShowLogin={setShowLogin}
-                    setShowSignUp={setShowSignUp}
-                    isLogging={isLogging}
-                    onLogout={handleLogout}
-                  />
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <Home items={items} onCardClick={setActiveItem} />
-                      }
-                    />
-                    <Route path="/playlist" element={<Playlist />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/callback" element={<SpotifyCallback />} />
-                  </Routes>
+    <BrowserRouter>
+      <CurrencyAuthUser.Provider
+        value={{ currentUser: user, setCurrentUser: setUser, isLogging }}
+      >
+        <CurrencyAuthSpotify.Provider value={authSpotify}>
+          <ResponsiveContainer>
+            <div className="app">
+              <Header
+                setShowLogin={setShowLogin}
+                setShowSignUp={setShowSignUp}
+                isLogging={isLogging}
+                onLogout={handleLogout}
+              />
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Home items={items} onCardClick={setActiveItem} />}
+                />
+                <Route path="/playlist" element={<Playlist />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/callback" element={<SpotifyCallback />} />
+              </Routes>
 
-                  {activeItem && (
-                    <ItemModal
-                      item={activeItem}
-                      onClose={() => setActiveItem(null)}
-                    />
-                  )}
-                  <SignIn
-                    isOpen={showLogin}
-                    onClose={() => setShowLogin(false)}
-                    errors={errors}
-                    setErrors={setErrors}
-                    saving={saving}
-                    setSaving={setSaving}
-                    setUser={setUser}
-                    setIsLogging={setIsLogging}
-                  />
-                  <SignUp
-                    isOpen={showSignUp}
-                    onClose={() => setShowSignUp(false)}
-                    errors={errors}
-                    setErrors={setErrors}
-                    saving={saving}
-                    setSaving={setSaving}
-                  />
-                </div>
-              </ResponsiveContainer>
-            </CurrencyAuthSpotify.Provider>
-          </CurrencyAuthUser.Provider>
-        </BrowserRouter>
-      </ToastProvider>
-    </ErrorBoundary>
+              {activeItem && (
+                <ItemModal
+                  item={activeItem}
+                  onClose={() => setActiveItem(null)}
+                />
+              )}
+              <SignIn
+                isOpen={showLogin}
+                onClose={() => setShowLogin(false)}
+                errors={errors}
+                setErrors={setErrors}
+                saving={saving}
+                setSaving={setSaving}
+                setUser={setUser}
+                setIsLogging={setIsLogging}
+              />
+              <SignUp
+                isOpen={showSignUp}
+                onClose={() => setShowSignUp(false)}
+                errors={errors}
+                setErrors={setErrors}
+                saving={saving}
+                setSaving={setSaving}
+              />
+            </div>
+          </ResponsiveContainer>
+        </CurrencyAuthSpotify.Provider>
+      </CurrencyAuthUser.Provider>
+    </BrowserRouter>
   );
 }
 

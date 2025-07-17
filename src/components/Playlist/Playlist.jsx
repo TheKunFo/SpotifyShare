@@ -10,13 +10,11 @@ import {
   unlikePlaylist,
 } from "../../utils/playlist";
 import { searchSpotify } from "../../utils/spotify";
-import { useToast } from "../Toast/Toast";
 import { Modal } from "../Modal/Modal.jsx";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 
 export default function Playlist() {
   const { currentUser } = useContext(CurrencyAuthUser);
-  const { toast } = useToast();
   const [playlists, setPlaylists] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { values, handleChange, errors, isValid, resetForm } =
@@ -38,7 +36,7 @@ export default function Playlist() {
 
   const loadPlaylists = () => {
     if (!currentUser) {
-      toast.error("Please log in to view playlists.");
+      console.error("Please log in to view playlists.");
       return;
     }
 
@@ -49,7 +47,7 @@ export default function Playlist() {
         setError("");
       })
       .catch((err) => {
-        toast.error(err.message);
+        console.error(err.message);
         console.error("Failed to load playlists:", err);
       })
       .finally(() => {
@@ -72,14 +70,15 @@ export default function Playlist() {
       };
 
       const data = await createPlaylist(playlistData);
+      console.log(data);
       setPlaylists((prev) => [data.playlist, ...prev]);
       resetForm();
       setShowCreateModal(false);
       setError("");
-      toast.success(`Playlist "${data.playlist.name}" created successfully!`);
+      console.log(`Playlist "${data.playlist.name}" created successfully!`);
     } catch (err) {
       console.error("Create playlist error:", err);
-      toast.error(
+      console.error(
         err.message || "Failed to create playlist. Please try again."
       );
     } finally {
@@ -94,10 +93,10 @@ export default function Playlist() {
         .then(() => {
           setPlaylists((prev) => prev.filter((p) => p._id !== playlistId));
           setError("");
-          toast.success("Playlist deleted successfully!");
+          console.log("Playlist deleted successfully!");
         })
         .catch((err) => {
-          toast.error(err.message);
+          console.error(err.message);
         })
         .finally(() => {
           setIsLoading(false);
@@ -130,12 +129,10 @@ export default function Playlist() {
           );
           setEditingPlaylist(null);
           setError("");
-          toast.success(
-            `Playlist "${data.playlist.name}" updated successfully!`
-          );
+          console.log(`Playlist "${data.playlist.name}" updated successfully!`);
         })
         .catch((err) => {
-          toast.error(err.message);
+          console.error(err.message);
         })
         .finally(() => {
           setIsLoading(false);
@@ -145,7 +142,7 @@ export default function Playlist() {
 
   const handleLikePlaylist = (playlistId) => {
     if (!currentUser) {
-      toast.error("Please login to like playlists");
+      console.error("Please login to like playlists");
       return;
     }
 
@@ -157,10 +154,10 @@ export default function Playlist() {
           prev.map((p) => (p._id === playlistId ? { ...p, isLiked: true } : p))
         );
         setError("");
-        toast.success("Playlist liked!");
+        console.log("Playlist liked!");
       })
       .catch((err) => {
-        toast.error(err.message);
+        console.error(err.message);
       })
       .finally(() => {
         setLikingPlaylist(null);
@@ -169,7 +166,7 @@ export default function Playlist() {
 
   const handleUnlikePlaylist = (playlistId) => {
     if (!currentUser) {
-      toast.error("Please login to unlike playlists");
+      console.error("Please login to unlike playlists");
       return;
     }
 
@@ -181,17 +178,17 @@ export default function Playlist() {
           prev.map((p) => (p._id === playlistId ? { ...p, isLiked: false } : p))
         );
         setError("");
-        toast.success("Playlist unliked!");
+        console.log("Playlist unliked!");
       })
       .catch((err) => {
-        toast.error(err.message);
+        console.error(err.message);
       })
       .finally(() => {
         setLikingPlaylist(null);
       });
   };
 
-  const handleSharePlaylist = async (playlist) => {
+  const handleSharePlaylist = (playlist) => {
     const playlistId = playlist._id || playlist.id;
     setSharingPlaylist(playlistId);
 
@@ -203,14 +200,14 @@ export default function Playlist() {
     try {
       // Try to use Web Share API if available (mobile/modern browsers)
       if (navigator.share) {
-        await navigator.share({
+        navigator.share({
           title: `Spotify Playlist: ${playlist.name}`,
           text: shareText,
           url: playlistUrl,
         });
       } else {
         // Fallback: Copy to clipboard
-        await navigator.clipboard.writeText(`${shareText}\n${playlistUrl}`);
+        navigator.clipboard.writeText(`${shareText}\n${playlistUrl}`);
 
         // Show temporary success message
         setError("");

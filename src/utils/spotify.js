@@ -44,8 +44,8 @@ export const getSpotifyAuthUrl = () => {
 };
 
 // Exchange authorization code for access token
-export const exchangeCodeForToken = async (code) => {
-  const response = await fetch("https://accounts.spotify.com/api/token", {
+export const exchangeCodeForToken = (code) => {
+  const response = fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -59,7 +59,7 @@ export const exchangeCodeForToken = async (code) => {
   });
 
   if (!response.ok) {
-    const errorData = await response.text();
+    const errorData = response.text();
     console.error("Token exchange error:", errorData);
     throw new Error("Failed to exchange code for token");
   }
@@ -68,8 +68,8 @@ export const exchangeCodeForToken = async (code) => {
 };
 
 // Refresh Spotify access token
-export const refreshSpotifyToken = async (refreshToken) => {
-  const response = await fetch("https://accounts.spotify.com/api/token", {
+export const refreshSpotifyToken = (refreshToken) => {
+  const response = fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -89,14 +89,14 @@ export const refreshSpotifyToken = async (refreshToken) => {
 };
 
 // Get current Spotify user profile
-export const getSpotifyUserProfile = async () => {
+export const getSpotifyUserProfile = () => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
     throw new Error("Please connect your Spotify account first");
   }
 
   try {
-    const response = await fetch(`${SPOTIFY_URL}/me`, {
+    const response = fetch(`${SPOTIFY_URL}/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -125,14 +125,14 @@ export const getSpotifyUserProfile = async () => {
 };
 
 // Get user's Spotify playlists
-export const getSpotifyPlaylists = async (limit = 20, offset = 0) => {
+export const getSpotifyPlaylists = (limit = 20, offset = 0) => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
     throw new Error("Please connect your Spotify account to view playlists");
   }
 
   try {
-    const response = await fetch(
+    const response = fetch(
       `${SPOTIFY_URL}/me/playlists?limit=${limit}&offset=${offset}`,
       {
         headers: {
@@ -255,7 +255,7 @@ export const disconnectFromSpotify = () => {
 };
 
 // Generic Spotify Web API fetch function
-export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
+export const fetchWebApi = (endpoint, method = "GET", body = null) => {
   const token = localStorage.getItem("spotify_access_token");
   if (!token) {
     throw new Error(
@@ -264,7 +264,7 @@ export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
   }
 
   try {
-    const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+    const res = fetch(`https://api.spotify.com/${endpoint}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -277,7 +277,7 @@ export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
       let errorMessage = `Spotify API error: ${res.status}`;
 
       try {
-        const errorData = await res.json();
+        const errorData = res.json();
         if (errorData.error && errorData.error.message) {
           errorMessage = errorData.error.message;
         }
@@ -307,7 +307,7 @@ export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
       throw new Error(errorMessage);
     }
 
-    return await res.json();
+    return res.json();
   } catch (error) {
     console.error(`Spotify API error for ${endpoint}:`, error);
     throw error;
@@ -315,9 +315,9 @@ export const fetchWebApi = async (endpoint, method = "GET", body = null) => {
 };
 
 // Get user's top tracks
-export const getTopTracks = async (timeRange = "long_term", limit = 5) => {
+export const getTopTracks = (timeRange = "long_term", limit = 5) => {
   try {
-    const response = await fetchWebApi(
+    const response = fetchWebApi(
       `v1/me/top/tracks?time_range=${timeRange}&limit=${limit}`,
       "GET"
     );
@@ -329,9 +329,9 @@ export const getTopTracks = async (timeRange = "long_term", limit = 5) => {
 };
 
 // Get user's top artists
-export const getTopArtists = async (timeRange = "long_term", limit = 5) => {
+export const getTopArtists = (timeRange = "long_term", limit = 5) => {
   try {
-    const response = await fetchWebApi(
+    const response = fetchWebApi(
       `v1/me/top/artists?time_range=${timeRange}&limit=${limit}`,
       "GET"
     );
@@ -343,9 +343,9 @@ export const getTopArtists = async (timeRange = "long_term", limit = 5) => {
 };
 
 // Get user's recently played tracks
-export const getRecentlyPlayed = async (limit = 10) => {
+export const getRecentlyPlayed = (limit = 10) => {
   try {
-    const response = await fetchWebApi(
+    const response = fetchWebApi(
       `v1/me/player/recently-played?limit=${limit}`,
       "GET"
     );

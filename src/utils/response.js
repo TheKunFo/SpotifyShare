@@ -1,9 +1,9 @@
-export const checkResponse = async (res) => {
+export const checkResponse = (res) => {
   if (!res.ok) {
     let errorMessage = `HTTP error! Status: ${res.status}`;
 
     try {
-      const errorData = await res.json();
+      const errorData = res.json();
 
       // Handle different types of API error responses
       if (errorData.error) {

@@ -32,7 +32,7 @@ export const checkFontLoaded = (
 /**
  * Load fonts with fallback
  */
-export const loadFontsWithFallback = async () => {
+export const loadFontsWithFallback = () => {
   const fonts = [
     { family: "Inter", weight: "400" },
     { family: "Inter", weight: "500" },
@@ -42,10 +42,10 @@ export const loadFontsWithFallback = async () => {
     { family: "Roboto", weight: "400" },
   ];
 
-  const fontPromises = fonts.map(async ({ family, weight }) => {
+  const fontPromises = fonts.map(({ family, weight }) => {
     try {
       if (document.fonts && document.fonts.load) {
-        await document.fonts.load(`${weight} 12px "${family}"`);
+        document.fonts.load(`${weight} 12px "${family}"`);
         return { family, weight, loaded: true };
       }
       return { family, weight, loaded: false };
@@ -55,7 +55,7 @@ export const loadFontsWithFallback = async () => {
     }
   });
 
-  const results = await Promise.allSettled(fontPromises);
+  const results = Promise.allSettled(fontPromises);
   return results
     .map((result) => (result.status === "fulfilled" ? result.value : null))
     .filter(Boolean);
